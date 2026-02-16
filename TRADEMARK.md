@@ -44,7 +44,7 @@ You may NOT:
 
 If you would like to use the TToolbox name or branding for any purpose, please contact:
 
-**Email:** [your email here]  
+**Email:** <julanzw@gmail.com>\
 **GitHub:** [@JulanZw](https://github.com/JulanZw)
 
 ## Attribution
