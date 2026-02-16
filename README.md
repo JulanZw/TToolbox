@@ -1,4 +1,4 @@
-# TToolbox Discord Framework
+# TToolbox Discord.js Framework
 
 A TypeScript-first Discord.js command framework with built-in handlers, logging, and utilities.
 
@@ -17,14 +17,14 @@ I made this for my own bots, but feel free to use it yourself!
 ## Installation
 
 ```bash
-npm install @julanzw/ttoolbox-discord-framework discord.js
+npm install @julanzw/ttoolbox-discordjs-framework discord.js
 ```
 
 ## Quick Start
 
 ```typescript
 import { Client, GatewayIntentBits } from 'discord.js';
-import { Command, CommandManager, TToolboxLogger } from '@julanzw/ttoolbox-discord-framework';
+import { Command, CommandManager, TToolboxLogger } from '@julanzw/ttoolbox-discordjs-framework';
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds]
@@ -63,6 +63,10 @@ client.on('interactionCreate', async (interaction) => {
 
 client.login(process.env.DISCORD_TOKEN);
 ```
+
+## Example
+
+An actual example of the framework being used can be found [in this repo](https://github.com/JulanZw/TibboBot)
 
 ## Documentation
 
