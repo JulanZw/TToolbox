@@ -1,0 +1,50 @@
+{
+  "name": "@julanzw/ttoolbox-discordjs-framework",
+  "version": "1.0.1",
+  "description": "A Discord.js command framework with built-in handlers and utilities",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "dev": "tsc --watch"
+  },
+  "keywords": [
+    "discord",
+    "discord.js",
+    "bot",
+    "framework",
+    "commands",
+    "typescript"
+  ],
+  "author": "JulanZw",
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JulanZw/ttoolbox-discordjs-framework.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JulanZw/ttoolbox-discordjs-framework/issues"
+  },
+  "homepage": "https://github.com/JulanZw/ttoolbox-discordjs-framework#readme",
+  "peerDependencies": {
+    "discord.js": "^14.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@prisma/client": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@prisma/client": "^6.11.1",
+    "@types/node": "^24.0.14",
+    "discord.js": "^14.21.0",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,14 @@
+src/
+node_modules/
+.git/
+.github/
+*.log
+*.tsbuildinfo
+tsconfig.json
+eslint.config.mts
+.prettierrc
+.env
+.env.*
+tests/
+examples/
+TRADEMARK.md
