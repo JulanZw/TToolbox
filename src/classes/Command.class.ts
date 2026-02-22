@@ -12,6 +12,7 @@ import { checkCooldown } from '../utils/cooldown.js';
 import { formatDuration } from '../utils/formatting.js';
 import { PermissionLevel } from '../types/permission.js';
 import { ILogger } from '../types/logger.js';
+import { ErrorReporter } from '../utils/ErrorReporter.js';
 
 /**
  * Abstract base class for Discord slash commands.
@@ -52,6 +53,9 @@ export abstract class Command {
 
   /** Logger instance to use inside the command */
   protected logger?: ILogger;
+
+  /** ErrorReporter instance to use inside the command */
+  protected errorReporter?: ErrorReporter;
 
   /**
    * Validates whether the command can be executed in the current context.
@@ -127,20 +131,29 @@ export abstract class Command {
 
     try {
       await fn();
-      const subcommandName = interaction.options.getSubcommand(false);
       this.logger?.log(
-        `${commandName} ${subcommandName ? `(${subcommandName}) ` : ``}command executed`,
+        `${commandName} command executed`,
         'info',
         scope,
       );
     } catch (err: any) {
       this.logger?.log(
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         `An Error occurred: ${err.message ?? err}`,
         'error',
         scope,
         true,
       );
+
+      if (this.errorReporter) {
+        await this.errorReporter.reportError(err, `Command: ${commandName}`, {
+          user: interaction.user.tag,
+          userId: interaction.user.id,
+          guild: interaction.guild?.name,
+          guildId: interaction.guildId,
+          channel: interaction.channel?.id,
+        });
+      }
+
       return await safeReply(interaction, 'An unexpected error occurred.');
     }
   }
@@ -271,5 +284,12 @@ export abstract class Command {
     logToConsole: boolean = false,
   ): void {
     this.logger?.log(message, level, scope, logToConsole);
+  }
+
+  /**
+   * Set the error reporter for this command
+   */
+  setErrorReporter(reporter: ErrorReporter): void {
+    this.errorReporter = reporter;
   }
 }

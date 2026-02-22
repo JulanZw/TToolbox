@@ -9,6 +9,7 @@ import { safeReply } from '../utils/editAndReply.js';
 import { ILogger } from '../types/logger.js';
 
 import { Command } from './Command.class.js';
+import { ErrorReporter } from '../utils/ErrorReporter.js';
 
 /**
  * Abstract base class for Discord slash command groups with subcommands.
@@ -45,6 +46,9 @@ export abstract class SubcommandGroup {
   /** The logger instance used in the subcommand group */
   protected logger?: ILogger;
 
+  /** ErrorReporter instance to use inside the subcommand group */
+  private errorReporter?: ErrorReporter;
+
   /**
    * Safely executes a function with error handling and logging.
    *
@@ -52,28 +56,36 @@ export abstract class SubcommandGroup {
    * and automatically handles errors by logging them and sending a user-friendly
    * error message.
    *
-   * @param commandName - The name of the parent command
+   * @param subcommandName - The name of the subcommand
    * @param scope - The logging scope for this execution
    * @param interaction - The command interaction
    * @param fn - The function to execute
    * @private
    */
   private async safeExecute(
-    commandName: string,
+    subcommandName: string,
     scope: string,
     interaction: ChatInputCommandInteraction,
     fn: () => Promise<any>,
   ) {
     try {
       await fn();
-      const subcommandName = interaction.options.getSubcommand(false);
       this.logger?.log(
-        `${commandName} ${subcommandName ? `(${subcommandName}) ` : ``}command executed`,
+        `${this.name} (${subcommandName}) command executed`,
         'info',
         scope,
       );
     } catch (err: any) {
       this.logger?.log('An Error occured' + err, 'error', scope, true);
+
+      await this.errorReporter?.reportError(err, `Command: ${subcommandName} in SubcommandGroup: ${this.name}`, {
+        user: interaction.user.tag,
+        userId: interaction.user.id,
+        guild: interaction.guild?.name,
+        guildId: interaction.guildId,
+        channel: interaction.channel?.id,
+      });
+
       return await safeReply(interaction, 'An unexpected error occurred.');
     }
   }
@@ -111,7 +123,7 @@ export abstract class SubcommandGroup {
 
     const scope = `${subcommand.name}_EXECUTION`;
 
-    await this.safeExecute(this.name, scope, interaction, () =>
+    await this.safeExecute(subcommandName, scope, interaction, () =>
       subcommand.execute(interaction, client),
     );
   }
@@ -204,5 +216,18 @@ export abstract class SubcommandGroup {
     logToConsole: boolean = false,
   ): void {
     this.logger?.log(message, level, scope, logToConsole);
+  }
+
+  /**
+   * Set the error reporter for this subcommand group.
+   */
+  setErrorReporter(reporter: ErrorReporter): this {
+    this.errorReporter = reporter;
+
+    for (const command of this.subcommands.values()) {
+      command.setErrorReporter(reporter);
+    }
+
+    return this;
   }
 }

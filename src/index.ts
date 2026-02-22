@@ -39,6 +39,7 @@ export {
 } from './utils/formatting.js';
 export { TIMES_MILISECONDS } from './utils/miliseconds.js';
 export { TToolboxLogger } from './utils/TToolboxLogger.class.js';
+export { ErrorReporter } from './utils/ErrorReporter.js';
 
 // Errors
 export { InteractionError } from './classes/InteractionError.class.js';
