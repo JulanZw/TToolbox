@@ -32,9 +32,10 @@ import { formatDateToYYYYMMDDHHMMSS } from './formatting.js';
  * ```
  */
 export class TToolboxLogger implements ILogger {
-  private logFilePath: string;
   private levels: Record<string, string>;
   private reset = '\x1b[0m';
+
+  protected logFilePath: string;
 
   // Default log levels
   private static readonly DEFAULT_LEVELS: Record<string, string> = {
@@ -261,31 +262,24 @@ export class TToolboxLogger implements ILogger {
   }
 
   /**
-   * Creates a new log file with a timestamp-based name and returns a new logger instance.
-   *
-   * Useful for log rotation - creates a new file while keeping the old one.
-   *
-   * @returns A new TToolboxLogger instance pointing to the new log file
-   *
+   * Creates a new log file with a timestamp-based name.
+   * Modifies this logger instance to write to the new file.
+   * 
+   * @returns This logger instance with the new filepath
+   * 
    * @example
    * ```typescript
-   * // Rotate logs daily
-   * let logger = new TToolboxLogger('./logs');
-   *
-   * // Later, create a new log file
-   * logger = logger.rotate();
+   * logger.rotate();
+   * logger.info('New log file started', 'logger');
    * ```
    */
-  rotate(): TToolboxLogger {
+  rotate(): this {
     const timestamp = formatDateToYYYYMMDDHHMMSS(new Date());
     const logDir = path.dirname(this.logFilePath);
     const newFileName = `log-${timestamp}.log`;
-
-    return new TToolboxLogger({
-      logDir,
-      logFileName: newFileName,
-      customLevels: this.levels,
-      extendDefaultLevels: false,
-    });
+    
+    this.logFilePath = path.join(logDir, newFileName);
+    
+    return this;
   }
 }
