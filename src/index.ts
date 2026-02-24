@@ -11,6 +11,12 @@ export type { PermissionLevel } from './types/permission.js';
 export type { Modal, ModalField } from './types/modal.js';
 export type { ButtonType } from './types/button.js';
 export type { ILogger } from './types/logger.js';
+export type { 
+  AnySelectMenuInteraction,
+  ButtonHandler,
+  SelectMenuHandler,
+  ComponentConfig 
+} from './types/component.js'
 
 // Utilities
 export { getPermissionsForLevel } from './utils/permissions.js';
@@ -40,6 +46,7 @@ export {
 export { TIMES_MILISECONDS } from './utils/miliseconds.js';
 export { TToolboxLogger } from './utils/TToolboxLogger.class.js';
 export { ErrorReporter } from './utils/ErrorReporter.js';
+export { ComponentManager } from './utils/ComponentManager.class.js';
 
 // Errors
 export { InteractionError } from './classes/InteractionError.class.js';
