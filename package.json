@@ -1,6 +1,6 @@
 {
   "name": "@julanzw/ttoolbox-discordjs-framework",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "A Discord.js command framework with built-in handlers and utilities",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -17,6 +17,7 @@ export type {
   SelectMenuHandler,
   ComponentConfig 
 } from './types/component.js'
+export type { AutocompleteHandler } from './types/autocomplete.js';
 
 // Utilities
 export { getPermissionsForLevel } from './utils/permissions.js';
@@ -47,6 +48,7 @@ export { TIMES_MILISECONDS } from './utils/miliseconds.js';
 export { TToolboxLogger } from './utils/TToolboxLogger.class.js';
 export { ErrorReporter } from './utils/ErrorReporter.js';
 export { ComponentManager } from './utils/ComponentManager.class.js';
+export { AutocompleteManager } from './utils/AutocompleteManager.class.js';
 
 // Errors
 export { InteractionError } from './classes/InteractionError.class.js';
