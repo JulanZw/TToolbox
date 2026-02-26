@@ -50,47 +50,6 @@ export abstract class SubcommandGroup {
   private errorReporter?: ErrorReporter;
 
   /**
-   * Safely executes a function with error handling and logging.
-   *
-   * Wraps the execution in a try-catch block, logs successful executions,
-   * and automatically handles errors by logging them and sending a user-friendly
-   * error message.
-   *
-   * @param subcommandName - The name of the subcommand
-   * @param scope - The logging scope for this execution
-   * @param interaction - The command interaction
-   * @param fn - The function to execute
-   * @private
-   */
-  private async safeExecute(
-    subcommandName: string,
-    scope: string,
-    interaction: ChatInputCommandInteraction,
-    fn: () => Promise<any>,
-  ) {
-    try {
-      await fn();
-      this.logger?.log(
-        `${this.name} (${subcommandName}) command executed`,
-        'info',
-        scope,
-      );
-    } catch (err: any) {
-      this.logger?.log('An Error occured' + err, 'error', scope, true);
-
-      await this.errorReporter?.reportError(err, `Command: ${subcommandName} in SubcommandGroup: ${this.name}`, {
-        user: interaction.user.tag,
-        userId: interaction.user.id,
-        guild: interaction.guild?.name,
-        guildId: interaction.guildId,
-        channel: interaction.channel?.id,
-      });
-
-      return await safeReply(interaction, 'An unexpected error occurred.');
-    }
-  }
-
-  /**
    * Executes the appropriate subcommand based on the user's interaction.
    *
    * This method:
@@ -121,11 +80,26 @@ export abstract class SubcommandGroup {
       throw new Error(`Unknown subcommand: ${subcommandName}`);
     }
 
-    const scope = `${subcommand.name}_EXECUTION`;
+    if (this.beforeExecute) {
+      const shouldContinue = await this.beforeExecute(interaction, client);
+      if (shouldContinue === false) {
+        return;
+      }
+    }
 
-    await this.safeExecute(subcommandName, scope, interaction, () =>
-      subcommand.execute(interaction, client),
-    );
+    try {
+      await subcommand.execute(interaction, client);
+
+      if (this.afterExecute) {
+        await this.afterExecute(interaction, client);
+      }
+    } catch (err: any) {
+      if (this.onError) {
+        await this.onError(interaction, err, client);
+      }
+      
+      throw err;
+    }
   }
 
   /**
@@ -230,4 +204,32 @@ export abstract class SubcommandGroup {
 
     return this;
   }
+
+  /**
+   * Lifecycle hook called before any subcommand in this group executes.
+   * 
+   * @param interaction - The command interaction
+   * @returns true to continue, false to stop execution
+   */
+  protected async beforeExecute?(
+    interaction: ChatInputCommandInteraction,
+    client: Client,
+  ): Promise<boolean | void>;
+
+  /**
+   * Lifecycle hook called after any subcommand in this group executes successfully.
+   */
+  protected async afterExecute?(
+    interaction: ChatInputCommandInteraction,
+    client: Client,
+  ): Promise<void>;
+
+  /**
+   * Lifecycle hook called when any subcommand in this group fails.
+   */
+  protected async onError?(
+    interaction: ChatInputCommandInteraction,
+    error: Error,
+    client: Client,
+  ): Promise<void>;
 }

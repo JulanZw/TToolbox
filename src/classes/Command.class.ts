@@ -175,7 +175,27 @@ export abstract class Command {
     await this.safeExecute(this.name, interaction, async () => {
       const error = this.validate(interaction);
       if (error) return await safeReply(interaction, error, true);
-      await this.run(interaction, client);
+
+      if (this.beforeExecute) {
+        const shouldContinue = await this.beforeExecute(interaction, client);
+        if (shouldContinue === false) {
+          return;
+        }
+      }
+
+      try {
+        await this.run(interaction, client);
+
+        if (this.afterExecute) {
+          await this.afterExecute(interaction, client);
+        }
+      } catch (err: any) {
+        if (this.onError) {
+          await this.onError(interaction, err, client);
+        }
+        
+        throw err;
+      }
     });
   }
 
@@ -292,4 +312,110 @@ export abstract class Command {
   setErrorReporter(reporter: ErrorReporter): void {
     this.errorReporter = reporter;
   }
+
+  /**
+   * Lifecycle hook called before command execution.
+   * 
+   * Can be used for:
+   * - Custom validation
+   * - Logging/analytics
+   * - Loading user preferences
+   * - Rate limiting checks
+   * - And more...
+   * 
+   * If this hook throws an error or returns false, execution is stopped.
+   * 
+   * @param interaction - The command interaction
+   * @returns true to continue execution, false to stop (or throw an error)
+   * 
+   * @example
+   * ```typescript
+   * protected async beforeExecute(interaction: ChatInputCommandInteraction): Promise<boolean> {
+   *   // Log command usage
+   *   console.log(`${interaction.user.tag} used ${this.name}`);
+   *   
+   *   // Check custom rate limit
+   *   if (await this.isRateLimited(interaction.user.id)) {
+   *     await interaction.reply('You are rate limited!');
+   *     return false; // Stop execution
+   *   }
+   *   
+   *   return true; // Continue
+   * }
+   * ```
+   */
+  protected async beforeExecute?(
+    interaction: ChatInputCommandInteraction,
+    client: Client,
+  ): Promise<boolean | void>;
+
+  /**
+   * Lifecycle hook called after successful command execution.
+   * 
+   * Can be used for:
+   * - Analytics tracking
+   * - Cleanup tasks
+   * - Success logging
+   * - Updating usage statistics
+   * - And more...
+   * 
+   * Note: This is **NOT** called if the command throws an error (use onError for that).
+   * 
+   * @param interaction - The command interaction
+   * 
+   * @example
+   * ```typescript
+   * protected async afterExecute(interaction: ChatInputCommandInteraction): Promise<void> {
+   *   // Track command usage
+   *   await analytics.track('command_used', {
+   *     command: this.name,
+   *     user: interaction.user.id,
+   *   });
+   *   
+   *   // Update user stats
+   *   await incrementCommandCount(interaction.user.id);
+   * }
+   * ```
+   */
+  protected async afterExecute?(
+    interaction: ChatInputCommandInteraction,
+    client: Client,
+  ): Promise<void>;
+
+  /**
+   * Lifecycle hook called when command execution fails.
+   * 
+   * Can be used for:
+   * - Custom error handling
+   * - Error reporting to external services
+   * - User-friendly error messages
+   * - Cleanup after errors
+   * - And more...
+   * 
+   * The error is rethrown after this hook.
+   * 
+   * @param interaction - The command interaction
+   * @param error - The error that occurred
+   * 
+   * @example
+   * ```typescript
+   * protected async onError(interaction: ChatInputCommandInteraction, error: Error): Promise<void> {
+   *   // Send to Sentry
+   *   Sentry.captureException(error, {
+   *     tags: { command: this.name },
+   *     user: { id: interaction.user.id },
+   *   });
+   *   
+   *   // Custom error message
+   *   if (error.message.includes('DATABASE')) {
+   *     await interaction.reply('Database is temporarily unavailable. Try again later.');
+   *   }
+   * }
+   * ```
+   */
+  protected async onError?(
+    interaction: ChatInputCommandInteraction,
+    error: Error,
+    client: Client,
+  ): Promise<void>;
 }
