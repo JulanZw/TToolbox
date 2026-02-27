@@ -10,6 +10,7 @@ import {
   ButtonInteraction,
   ChannelSelectMenuInteraction,
   ChatInputCommandInteraction,
+  ContextMenuCommandInteraction,
   EmbedBuilder,
   InteractionEditReplyOptions,
   InteractionReplyOptions,
@@ -51,7 +52,8 @@ export async function safeReply(
     | ButtonInteraction
     | ModalSubmitInteraction
     | ChannelSelectMenuInteraction
-    | StringSelectMenuInteraction,
+    | StringSelectMenuInteraction
+    | ContextMenuCommandInteraction,
   content: string,
   ephemeral: boolean = false,
   embeds?: EmbedBuilder[],

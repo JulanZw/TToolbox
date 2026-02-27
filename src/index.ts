@@ -4,7 +4,8 @@ export { SubcommandGroup } from './classes/SubcommandGroup.class.js';
 export { CommandManager } from './classes/CommandManager.class.js';
 export { DiscordHandler } from './classes/DiscordHandler.class.js';
 export { ModalManager } from './classes/ModalManager.class.js';
-export { PaginatedEmbed } from './utils/PaginatedEmbed.class.js';
+export { UserContextMenuCommand } from './classes/UserContextMenuCommand.class.js';
+export { MessageContextMenuCommand } from './classes/MessageContextMenuCommand.class.js';
 
 // Types
 export type { PermissionLevel } from './types/permission.js';
@@ -18,6 +19,7 @@ export type {
   ComponentConfig 
 } from './types/component.js'
 export type { AutocompleteHandler } from './types/autocomplete.js';
+export type { LoadCommandsOptions } from './types/loadCommands.js';
 
 // Utilities
 export { getPermissionsForLevel } from './utils/permissions.js';
@@ -44,11 +46,13 @@ export {
   getDaySuffix,
   capitalizeFirst,
 } from './utils/formatting.js';
+export { loadCommands } from './utils/loadCommands.js';
 export { TIMES_MILISECONDS } from './utils/miliseconds.js';
 export { TToolboxLogger } from './utils/TToolboxLogger.class.js';
 export { ErrorReporter } from './utils/ErrorReporter.js';
 export { ComponentManager } from './utils/ComponentManager.class.js';
 export { AutocompleteManager } from './utils/AutocompleteManager.class.js';
+export { PaginatedEmbed } from './utils/PaginatedEmbed.class.js';
 
 // Errors
 export { InteractionError } from './classes/InteractionError.class.js';
