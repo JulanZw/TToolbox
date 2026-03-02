@@ -57,7 +57,7 @@ export class AutocompleteManager {
    *   ];
    * });
    * 
-   * // Dynamic choices from database
+   * // Dynamic choices from a database
    * autocompleteManager.register('item', 'name', async (interaction, value) => {
    *   const items = await prisma.item.findMany({
    *     where: {

@@ -262,10 +262,10 @@ export class TToolboxLogger implements ILogger {
   }
 
   /**
-   * Creates a new log file with a timestamp-based name.
-   * Modifies this logger instance to write to the new file.
+   * Creates a new log file with a timestamp-based name 
+   * and moves content of the current log to that file.
    * 
-   * @returns This logger instance with the new filepath
+   * @returns This logger instance
    * 
    * @example
    * ```typescript
@@ -276,9 +276,11 @@ export class TToolboxLogger implements ILogger {
   rotate(): this {
     const timestamp = formatDateToYYYYMMDDHHMMSS(new Date());
     const logDir = path.dirname(this.logFilePath);
-    const newFileName = `log-${timestamp}.log`;
-    
-    this.logFilePath = path.join(logDir, newFileName);
+    const logName = `log-${timestamp}.log`;
+
+    fs.copyFileSync(this.logFilePath, path.join(logDir, logName));
+
+    this.clearLog();
     
     return this;
   }

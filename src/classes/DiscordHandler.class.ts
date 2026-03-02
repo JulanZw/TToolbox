@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import {
   Client,
   Events,
@@ -15,9 +12,8 @@ import {
   Awaitable,
   ClientEvents,
 } from 'discord.js';
-import { PrismaClient } from '@prisma/client';
 
-import { TToolboxLogger } from '../utils/TToolboxLogger.class.js';
+import { ILogger } from '../types/logger.js';
 
 /**
  * Abstract base class for Discord bot event handling.
@@ -45,21 +41,17 @@ export abstract class DiscordHandler {
   /** The Discord.js client instance */
   client: Client;
 
-  /** The Prisma database client instance, Optional */
-  private prisma?: PrismaClient;
-
-  /** The TToolboxLogger instance used for logging */
-  private logger: TToolboxLogger;
+  /** The ILogger instance used for logging */
+  private logger: ILogger;
 
   /**
    * Creates a new DiscordHandler instance.
    *
    * @param client - The Discord.js client instance
-   * @param prisma - The Prisma database client instance
+   * @param logger - The ILogger instance used for logging
    */
-  constructor(client: Client, logger: TToolboxLogger, prisma?: PrismaClient) {
+  constructor(client: Client, logger: ILogger) {
     this.client = client;
-    this.prisma = prisma;
     this.logger = logger;
   }
 
@@ -94,7 +86,6 @@ export abstract class DiscordHandler {
    *
    * Properly cleans up resources by:
    * 1. Destroying the Discord client connection
-   * 2. Disconnecting from the Prisma database
    * 3. Exiting the process
    *
    * @param signal - The signal that triggered the shutdown (e.g., 'SIGINT', 'SIGTERM')
@@ -117,16 +108,6 @@ export abstract class DiscordHandler {
       );
     }
 
-    if (this.prisma) {
-      try {
-        this.logger.info(`Disconnecting Prisma...`, scope);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        await this.prisma.$disconnect();
-      } catch (err: any) {
-        this.logger.error(`Failed to disconnect Prisma: ${err}`, scope, true);
-      }
-    }
-
     process.exit(0);
   }
 
@@ -141,7 +122,7 @@ export abstract class DiscordHandler {
    *
    * @example
    * ```typescript
-   * const handler = new MyBotHandler(client, prisma);
+   * const handler = new MyBotHandler(client, logger);
    * handler.setupErrorHandlers();
    * await handler.setupOtherHandlers();
    * ```

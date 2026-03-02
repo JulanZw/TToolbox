@@ -15,6 +15,7 @@ import { MessageContextMenuCommand } from './MessageContextMenuCommand.class.js'
 import { UserContextMenuCommand } from './UserContextMenuCommand.class.js';
 import { LoadCommandsOptions } from '../types/loadCommands.js';
 import { loadCommands } from '../utils/loadCommands.js';
+import { deprecatorWarner } from '../utils/deprecatorWarner.js';
 
 export class CommandManager {
   private commands: Map<string, Command | SubcommandGroup> = new Map();
@@ -131,6 +132,7 @@ export class CommandManager {
    * Register a single command or subcommand group
    */
   register(command: Command | SubcommandGroup): this {
+    deprecatorWarner('register()', 'registerCommand()');
     this.registerCommand(command);
     return this;
   }
@@ -141,6 +143,7 @@ export class CommandManager {
    * Register multiple commands at once
    */
   registerMultiple(commands: Array<Command | SubcommandGroup>): this {
+    deprecatorWarner('registerMultiple()', 'registerCommand()');
     this.registerCommand(commands);
     return this;
   }

@@ -53,3 +53,12 @@ to Command and SubcommandGroup
   - Added experimental autoloader function
 - Added the new commands as exports
 - Added experimental autoloader
+
+## V1.5.1 - No more prisma
+
+- Removed `Prisma` dependency entirely
+- Adjusted the logger used in the the `DiscordHandler` to use an `ILogger` instead of `TToolboxLogger`
+- Fixed `TToolboxLogger` rotation by:\
+  Instead of writing to the new file, it new copies the **content** to the new file and clears the file on the logFilePath instead.\
+  This should fix the bot not using the correct log file after restarting.
+- Added a small interal deprecation utility function.
