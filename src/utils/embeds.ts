@@ -121,6 +121,58 @@ export function createPaginationButtons(
   return buttons;
 }
 
+/**
+ * Creates an action row containing buttons with optional pagination controls.
+ * 
+ * Combines custom buttons with pagination buttons (prev/next) in a single row.
+ * The location parameter determines where pagination buttons are placed relative
+ * to custom buttons.
+ * 
+ * @param normalButtons - Array of custom buttons to include in the row
+ * @param pagination - Optional pagination configuration
+ * @param pagination.buttons - Array of exactly 2 pagination buttons (prev and next)
+ * @param pagination.location - Where to place pagination buttons relative to custom buttons
+ * @returns An ActionRowBuilder containing the combined buttons
+ * 
+ * @example Without pagination
+ * ```typescript
+ * const row = createButtonsRow([
+ *   createButton({ type: 'edit' }),
+ *   createButton({ type: 'delete' }),
+ * ]);
+ * // Result: [Edit] [Delete]
+ * ```
+ * 
+ * @example With pagination (embrace)
+ * ```typescript
+ * const row = createButtonsRow(
+ *   [createButton({ type: 'edit' })],
+ *   {
+ *     buttons: createPaginationButtons(0, 5),
+ *     location: 'embrace'
+ *   }
+ * );
+ * // Result: [<] [Edit] [>]
+ * ```
+ * 
+ * @example With pagination (start)
+ * ```typescript
+ * const row = createButtonsRow(
+ *   [createButton({ type: 'edit' })],
+ *   { buttons: createPaginationButtons(0, 5), location: 'start' }
+ * );
+ * // Result: [<] [>] [Edit]
+ * ```
+ * 
+ * @example With pagination (end)
+ * ```typescript
+ * const row = createButtonsRow(
+ *   [createButton({ type: 'edit' })],
+ *   { buttons: createPaginationButtons(0, 5), location: 'end' }
+ * );
+ * // Result: [Edit] [<] [>]
+ * ```
+ */
 export function createButtonsRow(
   normalButtons: ButtonBuilder[],
   pagination?: { buttons: ButtonBuilder[]; location: PaginationButtonLocation },

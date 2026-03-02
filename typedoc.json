@@ -1,0 +1,23 @@
+{
+  "entryPoints": ["src/index.ts"],
+  "out": "docs",
+  "plugin": ["typedoc-github-theme"],
+  "excludePrivate": false,
+  "excludeProtected": false,
+  "excludeInternal": true,
+  "readme": "README.md",
+  "name": "TToolbox Discord Framework",
+  "includeVersion": true,
+    "sort": ["kind", "alphabetical"],
+  "kindSortOrder": [
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Enum",
+    "Function"
+  ],
+  "navigationLinks": {
+    "GitHub": "https://github.com/JulanZw/TToolbox",
+    "npm": "https://www.npmjs.com/package/@julanzw/ttoolbox-discordjs-framework"
+  }
+}

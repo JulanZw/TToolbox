@@ -7,36 +7,90 @@ import {
 import { InteractionError } from '../classes/InteractionError.class.js';
 
 import {
-  createButton,
   createButtonsRow,
   createPaginationButtons,
 } from './embeds.js';
 import { safeReply } from './editAndReply.js';
 import { TIMES_MILISECONDS } from './miliseconds.js';
+import { PaginatedEmbedOptions } from '../types/paginatedEmbedOptions.js';
 
-export type PaginatedEmbedOptions<T> = {
-  // Optional extra buttons
-  extraButtons?: ReturnType<typeof createButton>[];
-  // Optional timeout in ms, defualts to 2 minutes
-  timeout?: number;
-
-  // Handler for custom button clicks
-  onCustomButton?: (
-    action: string,
-    index: number,
-    items: T[],
-  ) => Promise<{
-    handled: boolean;
-    newItems?: T[];
-    stopCollector?: boolean;
-  }>;
-};
-
+/**
+ * A utility class for creating paginated embeds with navigation buttons.
+ * 
+ * Displays a collection of items one at a time with prev/next buttons,
+ * and supports custom action buttons alongside pagination controls.
+ * 
+ * @typeParam T - The type of items being paginated
+ * 
+ * @example
+ * ```typescript
+ * //Basic Usage
+ * const reminders = await getReminders(userId);
+ * 
+ * const paginator = new PaginatedEmbed(
+ *   interaction,
+ *   reminders,
+ *   (reminder, index, total) => {
+ *     return [new EmbedBuilder()
+ *       .setTitle(`Reminder ${index + 1}/${total}`)
+ *       .setDescription(reminder.message)];
+ *   }
+ * );
+ * 
+ * await paginator.start();
+ * ```
+ * 
+ * @example
+ * ```typescript
+ * //With Custom Buttons
+ * const paginator = new PaginatedEmbed(
+ *   interaction,
+ *   items,
+ *   (item, index, total) => [buildEmbed(item)],
+ *   {
+ *     extraButtons: [createButton('delete', 'Delete', 'Danger')],
+ *     timeout: 5 * 60 * 1000,
+ *     onCustomButton: async (action, index, items) => {
+ *       if (action === 'delete') {
+ *         await deleteItem(items[index]);
+ *         return {
+ *           handled: true,
+ *           newItems: items.filter((_, i) => i !== index),
+ *           stopCollector: items.length === 1,
+ *         };
+ *       }
+ *       return { handled: false };
+ *     },
+ *   }
+ * );
+ * ```
+ */
 export class PaginatedEmbed<T> {
   private index = 0;
   private items: T[];
   private collector?: any;
 
+  /**
+   * Create a new paginated embed.
+   * 
+   * @param interaction - The command interaction to reply to
+   * @param items - Array of items to paginate through
+   * @param buildEmbed - Function to build embed(s) for each item
+   * @param options - Optional configuration for buttons and behavior
+   * 
+   * @example
+   * ```typescript
+   * new PaginatedEmbed(
+   *   interaction,
+   *   [item1, item2, item3],
+   *   (item, index, total) => [
+   *     new EmbedBuilder()
+   *       .setTitle(`Item ${index + 1}/${total}`)
+   *       .setDescription(item.description)
+   *   ]
+   * );
+   * ```
+   */
   constructor(
     private interaction: ChatInputCommandInteraction,
     items: T[],
@@ -46,6 +100,15 @@ export class PaginatedEmbed<T> {
     this.items = items;
   }
 
+  /**
+   * Build the button rows for the current state.
+   * 
+   * Combines pagination buttons (prev/next) with any custom buttons
+   * defined in options.
+   * 
+   * @private
+   * @returns Array of action rows containing buttons
+   */
   private buildButtons() {
     const paginationButtons = createPaginationButtons(
       this.index,
@@ -61,6 +124,21 @@ export class PaginatedEmbed<T> {
     ];
   }
 
+  /**
+   * Start the paginated embed interaction.
+   * 
+   * Sends the initial embed and sets up button collectors for navigation
+   * and custom actions. Automatically cleans up components when the
+   * collector times out.
+   * 
+   * @throws {InteractionError} If the interaction has already been replied to
+   * 
+   * @example
+   * ```typescript
+   * const paginator = new PaginatedEmbed(...);
+   * await paginator.start();
+   * ```
+   */
   async start() {
     await safeReply(
       this.interaction,
@@ -159,7 +237,20 @@ export class PaginatedEmbed<T> {
     });
   }
 
-  // Manually stop if needed
+  /**
+   * Manually stop the collector and clean up components.
+   * 
+   * Useful for stopping pagination early, such as when all items
+   * have been deleted or when implementing a "close" button.
+   * 
+   * @example
+   * ```typescript
+   * // In a custom button handler
+   * if (items.length === 0) {
+   *   paginator.stop();
+   * }
+   * ```
+   */
   stop() {
     if (this.collector) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -167,12 +258,38 @@ export class PaginatedEmbed<T> {
     }
   }
 
-  // For custom logic
+  /**
+   * Get the current page index.
+   * 
+   * Useful for custom button handlers that need to know which
+   * item is currently being displayed.
+   * 
+   * @returns The zero-based index of the current page
+   * 
+   * @example
+   * ```typescript
+   * const currentIndex = paginator.getCurrentIndex();
+   * console.log(`Viewing page ${currentIndex + 1}`);
+   * ```
+   */
   getCurrentIndex() {
     return this.index;
   }
 
-  // For custom logic
+  /**
+   * Get the current items array.
+   * 
+   * Useful for custom button handlers that need to inspect or
+   * modify the items being paginated.
+   * 
+   * @returns The current array of items
+   * 
+   * @example
+   * ```typescript
+   * const items = paginator.getItems();
+   * console.log(`${items.length} items remaining`);
+   * ```
+   */
   getItems() {
     return this.items;
   }

@@ -1,6 +1,6 @@
 {
   "name": "@julanzw/ttoolbox-discordjs-framework",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "A Discord.js command framework with built-in handlers and utilities",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,6 +11,8 @@
     "LICENSE"
   ],
   "scripts": {
+    "docs": "typedoc",
+    "docs:serve": "typedoc --watch",
     "build": "tsc",
     "prepublishOnly": "npm run build",
     "publish": "npm publish --access public",
@@ -40,6 +42,8 @@
   "devDependencies": {
     "@types/node": "^24.0.14",
     "discord.js": "^14.21.0",
+    "typedoc": "^0.28.17",
+    "typedoc-github-theme": "^0.4.0",
     "typescript": "^5.8.3"
   }
 }

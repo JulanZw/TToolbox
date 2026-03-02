@@ -62,3 +62,12 @@ to Command and SubcommandGroup
   Instead of writing to the new file, it new copies the **content** to the new file and clears the file on the logFilePath instead.\
   This should fix the bot not using the correct log file after restarting.
 - Added a small interal deprecation utility function.
+
+## V1.6.0 - Doc
+
+V1.6 will be dedicated to documentation and examples. To start:
+
+- Added jsdoc to most if not all important parts
+- Added `typedoc` to generate docs automatically
+- Added a github workflow for documentation deployment on github pages
+- Separated the paginatedEmbed options type into its own file

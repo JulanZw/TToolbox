@@ -17,6 +17,24 @@ import { LoadCommandsOptions } from '../types/loadCommands.js';
 import { loadCommands } from '../utils/loadCommands.js';
 import { deprecatorWarner } from '../utils/deprecatorWarner.js';
 
+/**
+ * Manages Discord bot commands and interactions.
+ * 
+ * The CommandManager is the central hub for registering and executing\
+ * all types of commands (slash commands, context menus, etc.).
+ * 
+ * @example
+ * ```typescript
+ * // Basic usage
+ * const commandManager = new CommandManager();
+ * const logger = new TToolboxLogger();
+ * commandManager.setLogger(logger);
+ * commandManager.registerCommand([
+ *   new PingCommand(),
+ *   new HelpCommand(),
+ * ]);
+ * ```
+ */
 export class CommandManager {
   private commands: Map<string, Command | SubcommandGroup> = new Map();
   private userContextMenuCommands: Map<string, UserContextMenuCommand> = new Map();
