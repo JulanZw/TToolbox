@@ -71,3 +71,10 @@ V1.6 will be dedicated to documentation and examples. To start:
 - Added `typedoc` to generate docs automatically
 - Added a github workflow for documentation deployment on github pages
 - Separated the paginatedEmbed options type into its own file
+
+## V1.6.1 - Examples
+
+V1.6 will be dedicated to documentation and examples. To start:
+
+- Added a basic bot example which shows the basic usage of TToolbox
+- Added an advanced bot example which shows the more advanced functionalities of TToolbox

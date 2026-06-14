@@ -1,0 +1,21 @@
+{
+  "name": "ttoolbox-advanced-bot-example",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "deploy": "tsx src/deploy-commands.ts"
+  },
+  "dependencies": {
+    "@julanzw/ttoolbox-discordjs-framework": "^1.5.1",
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.8.3"
+  }
+}

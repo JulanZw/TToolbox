@@ -1,0 +1,7 @@
+[2026-06-14 18:53:20] [INFO] [component-manager] Registered button handler: open-ticket
+[2026-06-14 18:53:20] [INFO] [component-manager] Registered button handler: close-ticket
+[2026-06-14 18:53:20] [INFO] [startup] Error handlers set up.
+[2026-06-14 18:53:21] [INFO] [startup] ✅ Logged in as Tibbo Test#0514
+[2026-06-14 18:53:21] [INFO] [startup] 📦 Loaded 3 commands
+[2026-06-14 18:53:21] [INFO] [startup] 🔄 Registering commands...
+[2026-06-14 18:53:21] [INFO] [startup] ✅ Registered 5 commands
