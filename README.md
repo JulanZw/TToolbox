@@ -66,11 +66,11 @@ client.login(process.env.DISCORD_TOKEN);
 
 ## Example
 
-An actual example of the framework being used can be found [in this repo](https://github.com/JulanZw/TibboBot)
+An actual example of the framework being used can be found [in this repo](https://github.com/JulanZw/TibboBot) or check the [examples folder](https://github.com/JulanZw/TToolbox/tree/main/examples)
 
 ## Documentation
 
-(hopefully soon)
+[Can be found here!](https://julanzw.github.io/TToolbox/)
 
 ## License
 
